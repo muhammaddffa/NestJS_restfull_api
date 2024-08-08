@@ -2,9 +2,14 @@ import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { PrismaService } from '../common/prisma.service';
 import { ValidationService } from '../common/validation.service';
-import { RegisterUserRequest, UserResponse } from '../model/user.model';
-import { UserValidation } from './ user.validation';
+import {
+  LoginUserRequest,
+  RegisterUserRequest,
+  UserResponse,
+} from '../model/user.model';
+import { UserValidation } from './user.validation';
 import * as bcrypt from 'bcrypt';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -38,6 +43,52 @@ export class UserService {
     return {
       username: user.username,
       name: user.name,
+    };
+  }
+
+  //Logic Login
+  async login(request: LoginUserRequest): Promise<UserResponse> {
+    this.logger.debug(`UserService.login(${JSON.stringify(request)})`);
+    const loginRequest: LoginUserRequest = this.validationService.validate(
+      UserValidation.LOGIN,
+      request,
+    );
+
+    let user = await this.prismaService.user.findUnique({
+      where: {
+        username: loginRequest.username,
+      },
+    });
+    // untuk mengecheck ada tau tidaknya usernmae pada database
+    if (!user) {
+      throw new HttpException('Username or password is invalid', 401);
+    }
+
+    // jika valid or si username ada di database
+    const isPasswordValid = await bcrypt.compare(
+      loginRequest.password,
+      user.password,
+    );
+
+    // ngecheck kalo tidak valid
+    if (!isPasswordValid) {
+      throw new HttpException('Username or password is invalid', 401);
+    }
+
+    // perlu yang namanya update
+    user = await this.prismaService.user.update({
+      where: {
+        username: loginRequest.username,
+      },
+      data: {
+        token: uuid(),
+      },
+    });
+
+    return {
+      username: user.username,
+      name: user.name,
+      token: user.token,
     };
   }
 }
