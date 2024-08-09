@@ -203,7 +203,7 @@ describe('UserController (e2e)', () => {
     });
   });
 
-  //Delete
+  //Logiut
   describe('DELETE /api/users/current', () => {
     beforeEach(async () => {
       await testService.deleteUser();
