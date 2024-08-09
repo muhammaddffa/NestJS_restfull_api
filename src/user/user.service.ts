@@ -102,6 +102,7 @@ export class UserService {
     };
   }
 
+  //Update
   async update(user: User, request: UpdateUserRequest): Promise<UserResponse> {
     this.logger.debug(
       `UserService.update(${JSON.stringify(user)}, ${JSON.stringify(request)})`,
@@ -129,6 +130,23 @@ export class UserService {
     return {
       name: result.name,
       username: result.username,
+    };
+  }
+
+  //Delete
+  async logout(user: User): Promise<UserResponse> {
+    const result = await this.prismaService.user.update({
+      where: {
+        username: user.username,
+      },
+      data: {
+        token: null,
+      },
+    });
+
+    return {
+      username: result.username,
+      name: result.name,
     };
   }
 }

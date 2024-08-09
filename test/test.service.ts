@@ -23,4 +23,12 @@ export class TestService {
       },
     });
   }
+
+  async getUser() {
+    return await this.prismaService.user.findUnique({
+      where: {
+        username: 'test',
+      },
+    });
+  }
 }
