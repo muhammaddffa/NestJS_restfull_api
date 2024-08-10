@@ -49,8 +49,7 @@ export class ContactService {
       id: contact.id,
     };
   }
-
-  async checkContactMustExist(
+  async checkContactMustExists(
     username: string,
     contactId: string,
   ): Promise<Contact> {
@@ -60,6 +59,7 @@ export class ContactService {
         id: contactId,
       },
     });
+
     if (!contact) {
       throw new HttpException('Contact is not found', 404);
     }
@@ -68,7 +68,7 @@ export class ContactService {
   }
 
   async get(user: User, contactId: string): Promise<ContactResponse> {
-    const contact = await this.checkContactMustExist(user.username, contactId);
+    const contact = await this.checkContactMustExists(user.username, contactId);
     return this.toContactResponse(contact);
   }
 
@@ -76,13 +76,13 @@ export class ContactService {
     user: User,
     request: UpdateContactRequest,
   ): Promise<ContactResponse> {
-    const updateRequesst = this.validationService.validate(
+    const updateRequest = this.validationService.validate(
       ContactValidation.UPDATE,
       request,
     );
-    let contact = await this.checkContactMustExist(
+    let contact = await this.checkContactMustExists(
       user.username,
-      updateRequesst.id,
+      updateRequest.id,
     );
 
     contact = await this.prismaService.contact.update({
@@ -90,7 +90,7 @@ export class ContactService {
         id: contact.id,
         username: contact.username,
       },
-      data: updateRequesst,
+      data: updateRequest,
     });
 
     return this.toContactResponse(contact);

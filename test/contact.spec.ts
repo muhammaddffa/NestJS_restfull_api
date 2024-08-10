@@ -142,7 +142,7 @@ describe('UserController', () => {
     it('should be rejected if contact is not found', async () => {
       const contact = await testService.getContact();
       const response = await request(app.getHttpServer())
-        .put(`/api/contacts/${contact.id}`)
+        .put(`/api/contacts/${contact.id + 1}`)
         .set('Authorization', 'test')
         .send({
           first_name: 'test',

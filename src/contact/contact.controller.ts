@@ -47,14 +47,14 @@ export class ContactController {
     };
   }
 
-  @Put('/:contacId')
+  @Put('/:contactId')
   @HttpCode(200)
   async update(
     @Auth() user: User,
-    @Param('contactId') contacId: string,
+    @Param('contactId') contactId: string,
     @Body() request: UpdateContactRequest,
   ): Promise<WebResponse<ContactResponse>> {
-    request.id = contacId;
+    request.id = contactId;
     const result = await this.contactService.update(user, request);
     return {
       data: result,
