@@ -43,17 +43,6 @@ Headers :
 
 - Authorization : token
 
-Request Body :
-
-```json
-{
-  "street": "jalan panggung",
-  "city": "Tegal",
-  "province": "Jawa Tengah",
-  "country": "Indonesia",
-  "postal_code": "12334"
-}
-```
 
 Response Body :
 
@@ -68,7 +57,7 @@ Response Body :
     "postal_code": "12334"
   }
 }
-```
+````
 
 ## Update Address
 
